@@ -1,6 +1,6 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "cloakroom",
+  "name": "cloakroom-plugin",
   "description": "Cloakroom: names, emails, addresses and API keys are swapped for placeholders before Claude sees them, and restored locally.",
   "owner": {"name": "Shanjeev Rajendran", "url": "https://github.com/shanjeevrajendran"},
   "plugins": [{"name": "cloakroom", "source": "./", "category": "security",
