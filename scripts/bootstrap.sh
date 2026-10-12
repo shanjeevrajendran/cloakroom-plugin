@@ -37,8 +37,10 @@ fi
 
 install() {  # install SPEC FORCE(0|1)
   case "$WHO" in
-    uv)   if [ "$2" = 1 ]; then uv tool install --force "$1"; else uv tool install "$1"; fi ;;
-    pipx) if [ "$2" = 1 ]; then pipx install --force "$1"; else pipx install "$1"; fi ;;
+    # uv and pipx get the release spelled out (the Claude plugin directory checks these pins); the CLOAKROOM_SPEC_*
+    # overrides, for tests, apply to the virtualenv route
+    uv)   if [ "$2" = 1 ]; then uv tool install --force "cloakroom[model,torch]==0.2.2"; else uv tool install "cloakroom==0.2.2"; fi ;;
+    pipx) if [ "$2" = 1 ]; then pipx install --force "cloakroom[model,torch]==0.2.2"; else pipx install "cloakroom==0.2.2"; fi ;;
     venv) { [ -x "$H/venv/bin/python" ] || "$(py310)" -m venv "$H/venv"; } && PIP_DISABLE_PIP_VERSION_CHECK=1 "$H/venv/bin/python" -m pip install -q -U "$1" ;;
     *)    return 1 ;;
   esac
