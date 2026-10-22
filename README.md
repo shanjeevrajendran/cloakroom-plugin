@@ -36,4 +36,37 @@ because PyTorch and ONNX Runtime publish no Intel Mac builds. Linux on ARM (aarc
 without a desktop keyring (Secret Service), for example a server, the vault key is kept in a file only you can read,
 and `cloakroom doctor` says so.
 
+## Privacy
+
+Everything runs on your machine. Cloakroom reads your prompts, the output of Claude's tool calls and the files
+Claude writes, so it can mask and restore values. It sends none of it anywhere; the details are below. To remove
+everything: `/plugin uninstall cloakroom`, uninstall the program (`uv tool uninstall cloakroom` or
+`pipx uninstall cloakroom`), delete `~/.cloakroom`, and delete the `cloakroom` / `vault-key` entry from your
+system's secure store. How masking works and what it does not protect against:
+[How it works](https://github.com/shanjeevrajendran/cloakroom/blob/main/docs-HOW-IT-WORKS.md#threat-model).
+Security reports: [SECURITY.md](https://github.com/shanjeevrajendran/cloakroom/blob/main/SECURITY.md).
+
+### What it fetches and sends
+
+- **Fetches once:** the `cloakroom` package and its dependencies from PyPI, and the PII-Tracer detection model
+  (`perplexity-ai/PII-Tracer`, a pinned revision) from Hugging Face. Without uv or pipx, it first fetches
+  uv 0.13.1 with its maker's installer from astral.sh (`https://astral.sh/uv/0.13.1/install.sh`, or `install.ps1`
+  on Windows), and runs that script only if its SHA-256 matches the one pinned in the plugin
+  (`7c482d409673a53f4d9bd34ae95c9166be3b8d89ca82f27dd7bca3cab457afff` for install.sh,
+  `f6c934a9926096f957615f9f5276efd3caeab58253eec613963a72d12b380e63` for install.ps1, the digests GitHub lists for
+  that uv release); the script downloads uv from releases.astral.sh and checks it against its own SHA-256. uv then
+  downloads a standalone Python 3.12 from releases.astral.sh when the machine has none. On machines without a GPU
+  it builds a faster
+  CPU copy of the model locally. The OCR models for scanned PDFs and photos ship inside the package, so OCR
+  downloads nothing and runs on your CPU.
+- **Sends nothing.** File contents, prompts and tool output never leave your machine through Cloakroom. The only
+  network calls are the downloads above.
+
+### What it stores
+
+- An AES-GCM encrypted vault of the real values for each session in `~/.cloakroom`, with the key in your system's
+  secure store (Keychain, Windows Credential Manager, Secret Service).
+- An activity log without values, and your labels and rules (encrypted) for the local dashboard
+  (`cloakroom dashboard`).
+
 License: Apache-2.0. Made by Shanjeev Rajendran.
