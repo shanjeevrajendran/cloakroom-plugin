@@ -36,6 +36,18 @@ because PyTorch and ONNX Runtime publish no Intel Mac builds. Linux on ARM (aarc
 without a desktop keyring (Secret Service), for example a server, the vault key is kept in a file only you can read,
 and `cloakroom doctor` says so.
 
+## The panel
+
+Claude Code shows a small Cloakroom panel beside the chat; `/cloakroom-panel` opens it again if you close it. It only reads Cloakroom's activity log on your computer (counts, never the values), and sends nothing anywhere.
+
+- **The light** says whether Cloakroom is on (green), paused (amber) or not set up yet (grey).
+- **Masked**: how many private values were swapped out before Claude saw them in this session.
+- **Stopped**: prompts or commands Cloakroom blocked.
+- **Held**: commands waiting for your OK.
+- **Not checked**: calls that went through without a full check (for example a file too large to scan).
+- **Pause prompt checks 10 min** stops checking the prompts you type, the same as typing `cr: pause 10m`. Files and tool results stay protected.
+- **Resume checks** turns prompt checks back on, the same as typing `cr: resume`.
+
 ## Privacy
 
 Everything runs on your machine. Cloakroom reads your prompts, the output of Claude's tool calls and the files
